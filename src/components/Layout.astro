@@ -1,0 +1,33 @@
+---
+import Footer from "./Footer.astro";
+import Header from "./Header.astro";
+import "../styles/global.css";
+
+const {
+  title,
+  description = "Fielddesk 是一个中文研究型内容站，关注行业观察、公司研究、人物档案、专题文章和来源整理。",
+} = Astro.props;
+
+const pageTitle = title ? `${title} · Fielddesk` : "Fielddesk";
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f8fb" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到正文</a>
+    <div class="site-shell">
+      <Header />
+      <main id="main" class="site-main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

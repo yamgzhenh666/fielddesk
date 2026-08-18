@@ -1,0 +1,56 @@
+---
+import ArticleCard from "../../components/ArticleCard.astro";
+import Layout from "../../components/Layout.astro";
+import { getCollection } from "astro:content";
+import { groupPostsBySection, sectionMeta, sortPosts } from "../../lib/blog";
+
+const posts = sortPosts(await getCollection("blog"));
+const grouped = groupPostsBySection(posts);
+---
+
+<Layout
+  title="文章库"
+  description="Fielddesk 的文章按栏目归档，适合按主题、公司、人物和来源继续追踪。"
+>
+  <section class="page-band">
+    <div class="site-container archive">
+      <div class="article-detail">
+        <p class="eyebrow">文章库</p>
+        <h1>按栏目整理的研究文章</h1>
+        <p class="article__lede">
+          这里不是按时间堆砌的更新流，而是围绕栏目持续积累的研究库。你可以先看最新更新，也可以直接跳到某一类主题。
+        </p>
+      </div>
+      <nav class="section-jump" aria-label="栏目跳转">
+        {grouped.map(({ section, items }) => (
+          <a href={`#${section}`}>
+            {sectionMeta[section].label} · {items.length}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  {grouped.map(({ section, items }) => {
+    const meta = sectionMeta[section];
+    return (
+      <section class="page-band" id={section}>
+        <div class="site-container archive-group">
+          <div class="archive-group__head">
+            <div>
+              <p class="eyebrow">{meta.subtitle}</p>
+              <h2>{meta.label}</h2>
+              <p>{meta.summary}</p>
+            </div>
+            <a href="#main">回到顶部</a>
+          </div>
+          <div class="archive-list">
+            {items.map((post) => (
+              <ArticleCard entry={post} compact />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  })}
+</Layout>

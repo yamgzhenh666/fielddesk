@@ -1,0 +1,31 @@
+---
+import { estimateReadingTime, formatDate, sectionMeta } from "../lib/blog";
+
+const { entry, featured = false, compact = false } = Astro.props;
+const meta = sectionMeta[entry.data.section];
+const readingTime = estimateReadingTime(entry.body);
+---
+
+<article
+  class:list={[
+    "article-card",
+    featured ? "is-featured" : "",
+    compact ? "is-compact" : "",
+  ]}
+  style={`--section-accent: ${meta.accent};`}
+>
+  <a class="article-card__link" href={`/blog/${entry.id}/`}>
+    <div class="article-card__meta">
+      <span class="section-chip">{meta.label}</span>
+      <span class="article-card__info">
+        {formatDate(entry.data.pubDate)} · {readingTime} 分钟
+      </span>
+    </div>
+    <h3 class="article-card__title">{entry.data.title}</h3>
+    <p class="article-card__desc">{entry.data.description}</p>
+    <div class="article-card__footer">
+      <span>{meta.subtitle}</span>
+      <span>阅读文章</span>
+    </div>
+  </a>
+</article>

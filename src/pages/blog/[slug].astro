@@ -1,0 +1,105 @@
+---
+import { getCollection, render } from "astro:content";
+import ArticleCard from "../../components/ArticleCard.astro";
+import Layout from "../../components/Layout.astro";
+import {
+  estimateReadingTime,
+  formatDate,
+  sectionMeta,
+  sortPosts,
+} from "../../lib/blog";
+
+export async function getStaticPaths() {
+  const posts = sortPosts(await getCollection("blog"));
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { slug: post.id },
+  }));
+}
+
+const posts = sortPosts(await getCollection("blog"));
+const { slug } = Astro.props;
+const post = posts.find((item) => item.id === slug);
+
+if (!post) {
+  throw new Error(`Missing blog post: ${slug}`);
+}
+
+const { Content } = await render(post);
+const meta = sectionMeta[post.data.section];
+const related = posts
+  .filter((item) => item.id !== post.id && item.data.section === post.data.section)
+  .slice(0, 2);
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <article class="site-container content-grid article-page">
+    <div class="article">
+      <header class="article__header">
+        <p class="article__kicker">
+          <a href="/blog/">文章库</a>
+          <span>·</span>
+          <span style={`color: ${meta.accent};`}>{meta.label}</span>
+        </p>
+        <h1>{post.data.title}</h1>
+        <p class="article__lede">{post.data.description}</p>
+        <div class="article__meta">
+          <span>{formatDate(post.data.pubDate)}</span>
+          <span>{estimateReadingTime(post.body)} 分钟阅读</span>
+          <span>{post.data.author}</span>
+          {post.data.updatedDate ? <span>更新于 {formatDate(post.data.updatedDate)}</span> : null}
+        </div>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {post.data.sources.length > 0 && (
+        <section class="info-panel">
+          <h2>Sources</h2>
+          <div class="source-list">
+            {post.data.sources.map((source) => (
+              <div class="source-item">
+                <a href={source.href} target="_blank" rel="noreferrer">
+                  {source.label}
+                </a>
+                {source.note ? <small>{source.note}</small> : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="related">
+          <div class="related__head">
+            <h2>相关阅读</h2>
+            <a href="/blog/">回到文章库</a>
+          </div>
+          <div class="related-grid">
+            {related.map((item) => (
+              <ArticleCard entry={item} compact />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+
+    <aside class="aside-stack">
+      <section class="info-panel">
+        <p class="eyebrow">栏目</p>
+        <h2>{meta.label}</h2>
+        <p>{meta.summary}</p>
+      </section>
+      <section class="info-panel">
+        <p class="eyebrow">阅读提示</p>
+        <ul>
+          <li>先看结论，再回到来源。</li>
+          <li>正文和 Sources 都保留公开链接。</li>
+          <li>同一栏目会持续补充后续文章。</li>
+        </ul>
+      </section>
+    </aside>
+  </article>
+</Layout>
