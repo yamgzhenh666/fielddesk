@@ -1,0 +1,54 @@
+---
+import ArticleCard from "../components/ArticleCard.astro";
+import Layout from "../components/Layout.astro";
+import { getCollection } from "astro:content";
+import { sectionMeta, sectionOrder, sortPosts } from "../lib/blog";
+
+export async function getStaticPaths() {
+  return sectionOrder.map((section) => ({
+    params: { section },
+    props: { section },
+  }));
+}
+
+const { section } = Astro.props;
+const meta = sectionMeta[section];
+const posts = sortPosts(await getCollection("blog")).filter(
+  (post) => post.data.section === section,
+);
+const lead = posts[0];
+const rest = posts.slice(1);
+---
+
+<Layout title={meta.label} description={`${meta.label}：${meta.summary}`}>
+  <section class="site-container hero">
+    <div class="hero__intro">
+      <p class="eyebrow">{meta.english}</p>
+      <h1>{meta.label}</h1>
+      <p>{meta.summary}</p>
+      <p class="hero__note">{meta.subtitle}</p>
+    </div>
+    {lead && (
+      <div class="hero__feature">
+        <div class="section-head">
+          <h2>最新文章</h2>
+        </div>
+        <ArticleCard entry={lead} featured />
+      </div>
+    )}
+  </section>
+
+  <section class="page-band">
+    <div class="site-container home-grid">
+      <div class="section-head">
+        <h2>全部文章</h2>
+        <p>按发布时间倒序排列。</p>
+      </div>
+      <div class="latest-list">
+        {rest.length > 0
+          ? rest.map((post) => <ArticleCard entry={post} compact />)
+          : lead ? <ArticleCard entry={lead} compact /> : <p>这个专栏还没有文章。</p>}
+      </div>
+    </div>
+  </section>
+</Layout>

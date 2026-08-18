@@ -1,0 +1,60 @@
+---
+import Layout from "../../components/Layout.astro";
+import { sectionMeta, sectionOrder } from "../../lib/blog";
+---
+
+<Layout
+  title="关于"
+  description="关于 Fielddesk 的定位、编辑方法、来源原则和当前发布方式。"
+>
+  <section class="page-band">
+    <div class="site-container content-grid article-page">
+      <div class="article">
+        <header class="article__header">
+          <p class="eyebrow">关于 Fielddesk</p>
+          <h1>一个把公开材料整理成判断的中文研究站</h1>
+          <p class="article__lede">
+            Fielddesk 关注行业变化、公司动作、人物线索和专题研究。当前阶段保持静态发布，不做登录、会员、数据库或后台系统，内容由 Markdown 管理。
+          </p>
+        </header>
+
+        <div class="prose">
+          <h2>编辑方法</h2>
+          <p>
+            Fielddesk 的文章会先交代材料来源，再写观察和判断。我们尽量区分事实、推断和需要继续追踪的问题，避免把观点写成不可复核的结论。
+          </p>
+
+          <h2>来源原则</h2>
+          <p>
+            每篇文章底部会保留来源清单。来源不是单独的栏目，而是研究写作的一部分，方便读者回到公告、官网、统计口径或公开采访继续核验。
+          </p>
+
+          <h2>专栏结构</h2>
+          <p>
+            四个专栏分别处理不同类型的问题：观察变化、研究公司、理解人物，以及梳理行业专题。首页和推介页则跨专栏组织内容。
+          </p>
+        </div>
+      </div>
+
+      <aside class="aside-stack">
+        <section class="info-panel">
+          <p class="eyebrow">专栏</p>
+          <ul>
+            {sectionOrder.map((section) => {
+              const meta = sectionMeta[section];
+              return (
+                <li>
+                  <a href={meta.path}>{meta.label}</a>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+        <section class="info-panel">
+          <p class="eyebrow">发布方式</p>
+          <p>Astro 静态站点，GitHub 托管代码，Netlify 自动部署。</p>
+        </section>
+      </aside>
+    </div>
+  </section>
+</Layout>

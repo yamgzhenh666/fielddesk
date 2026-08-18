@@ -37,9 +37,9 @@ const related = posts
     <div class="article">
       <header class="article__header">
         <p class="article__kicker">
-          <a href="/blog/">文章库</a>
+          <a href={meta.path}>{meta.label}</a>
           <span>·</span>
-          <span style={`color: ${meta.accent};`}>{meta.label}</span>
+          <span style={`color: ${meta.accent};`}>{meta.english}</span>
         </p>
         <h1>{post.data.title}</h1>
         <p class="article__lede">{post.data.description}</p>
@@ -57,7 +57,7 @@ const related = posts
 
       {post.data.sources.length > 0 && (
         <section class="info-panel">
-          <h2>Sources</h2>
+          <h2>来源</h2>
           <div class="source-list">
             {post.data.sources.map((source) => (
               <div class="source-item">
@@ -75,7 +75,7 @@ const related = posts
         <section class="related">
           <div class="related__head">
             <h2>相关阅读</h2>
-            <a href="/blog/">回到文章库</a>
+            <a href={meta.path}>回到{meta.label}</a>
           </div>
           <div class="related-grid">
             {related.map((item) => (
@@ -88,7 +88,7 @@ const related = posts
 
     <aside class="aside-stack">
       <section class="info-panel">
-        <p class="eyebrow">栏目</p>
+        <p class="eyebrow">专栏</p>
         <h2>{meta.label}</h2>
         <p>{meta.summary}</p>
       </section>
@@ -96,8 +96,8 @@ const related = posts
         <p class="eyebrow">阅读提示</p>
         <ul>
           <li>先看结论，再回到来源。</li>
-          <li>正文和 Sources 都保留公开链接。</li>
-          <li>同一栏目会持续补充后续文章。</li>
+          <li>正文和来源清单都保留公开链接。</li>
+          <li>同一专栏会持续补充后续文章。</li>
         </ul>
       </section>
     </aside>

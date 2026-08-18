@@ -1,0 +1,52 @@
+---
+import ArticleCard from "../../components/ArticleCard.astro";
+import Layout from "../../components/Layout.astro";
+import { getCollection } from "astro:content";
+import { sortPosts } from "../../lib/blog";
+
+const posts = sortPosts(await getCollection("blog"));
+const picks = posts.filter((post) => post.data.featured);
+const recommended = picks.length > 0 ? picks : posts.slice(0, 3);
+const readingList = posts.filter((post) => !recommended.some((item) => item.id === post.id));
+---
+
+<Layout
+  title="推介"
+  description="Fielddesk 推介页收录编辑精选、近期重点和适合从这里开始阅读的文章。"
+>
+  <section class="page-band">
+    <div class="site-container article-detail">
+      <p class="eyebrow">推介</p>
+      <h1>适合从这里开始读的文章</h1>
+      <p class="article__lede">
+        推介页不按专栏归类，而是按编辑判断挑出最值得优先阅读的内容：正在形成的趋势、需要继续追踪的公司动作，以及能代表 Fielddesk 方法的文章。
+      </p>
+    </div>
+  </section>
+
+  <section class="page-band">
+    <div class="site-container home-grid">
+      <div class="section-head">
+        <h2>编辑精选</h2>
+        <p>优先展示能够代表当前观察重点的内容。</p>
+      </div>
+      <div class="latest-list">
+        {recommended.map((post, index) => (
+          <ArticleCard entry={post} featured={index === 0} compact={index !== 0} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="page-band">
+    <div class="site-container home-grid">
+      <div class="section-head">
+        <h2>继续阅读</h2>
+        <p>不按栏目切分，只按阅读路径继续往下排。</p>
+      </div>
+      <div class="latest-list">
+        {readingList.slice(0, 6).map((post) => <ArticleCard entry={post} compact />)}
+      </div>
+    </div>
+  </section>
+</Layout>

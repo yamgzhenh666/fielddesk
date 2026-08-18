@@ -20,7 +20,6 @@ const blog = defineCollection({
       "company-dossiers",
       "people",
       "sector-briefs",
-      "sources",
     ]),
     featured: z.boolean().default(false),
     author: z.string().default("Fielddesk Editorial"),

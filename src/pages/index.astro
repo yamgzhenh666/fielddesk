@@ -6,28 +6,33 @@ import { sectionMeta, sectionOrder, sortPosts } from "../lib/blog";
 
 const posts = sortPosts(await getCollection("blog"));
 const featured = posts.find((post) => post.data.featured) ?? posts[0];
-const latestPosts = posts.filter((post) => post.id !== featured.id).slice(0, 3);
+const latestPosts = posts.filter((post) => post.id !== featured.id).slice(0, 4);
+const columnHighlights = sectionOrder.map((section) => ({
+  section,
+  post: posts.find((post) => post.data.section === section),
+}));
 ---
 
 <Layout
   title="Fielddesk"
-  description="Fielddesk 是一个中文研究型内容站，关注行业观察、公司研究、人物档案、专题文章和来源整理。"
+  description="Fielddesk 是一个中文研究型内容站，关注行业观察、公司研究、人物研究和行业专题。"
 >
   <section class="site-container hero">
     <div class="hero__intro">
       <p class="eyebrow">Fielddesk</p>
-      <h1>中文研究型内容站</h1>
+      <h1>把公开材料整理成可以复核的判断</h1>
       <p>
-        我们把公开材料、行业变化和人物线索放在同一张桌面上看，尽量用克制的语言写清楚判断，不做夸张包装，也不把内容写成日记。
+        Fielddesk 关注行业变化、公司动作、人物线索和专题研究。这里不做资讯堆叠，也不做营销式包装，而是把问题、材料和判断放在同一张桌面上。
       </p>
-      <p class="hero__note">
-        首页优先呈现最新更新和固定栏目，帮助读者快速判断这里正在追踪什么、为什么值得继续看。
-      </p>
+      <div class="hero-actions">
+        <a class="text-button" href="/featured/">查看推介</a>
+        <a class="text-button" href="/about/">了解方法</a>
+      </div>
     </div>
     <div class="hero__feature">
       <div class="section-head">
-        <h2>最新重点</h2>
-        <a href="/blog/">查看全部</a>
+        <h2>本期重点</h2>
+        <a href="/featured/">更多推介</a>
       </div>
       <ArticleCard entry={featured} featured />
     </div>
@@ -37,7 +42,7 @@ const latestPosts = posts.filter((post) => post.id !== featured.id).slice(0, 3);
     <div class="site-container home-grid">
       <div class="section-head">
         <h2>最新更新</h2>
-        <a href="/blog/">进入文章库</a>
+        <p>跨专栏按时间呈现，方便快速进入正在更新的问题。</p>
       </div>
       <div class="latest-list">
         {latestPosts.map((post) => <ArticleCard entry={post} compact />)}
@@ -45,11 +50,11 @@ const latestPosts = posts.filter((post) => post.id !== featured.id).slice(0, 3);
     </div>
   </section>
 
-  <section class="page-band" id="sections">
+  <section class="page-band">
     <div class="site-container">
       <div class="section-head">
-        <h2>栏目结构</h2>
-        <p>每个栏目负责一种固定工作，方便长期积累与回看。</p>
+        <h2>专栏</h2>
+        <p>四个入口分别负责观察、公司、人物和专题。</p>
       </div>
       <div class="section-overview">
         {sectionOrder.map((section) => {
@@ -57,12 +62,12 @@ const latestPosts = posts.filter((post) => post.id !== featured.id).slice(0, 3);
           return (
             <a
               class="overview-card"
-              href={`/blog/#${section}`}
+              href={meta.path}
               style={`--section-accent: ${meta.accent};`}
             >
               <div class="overview-card__title">
                 <strong>{meta.label}</strong>
-                <span>{meta.subtitle}</span>
+                <span>{meta.english}</span>
               </div>
               <p>{meta.summary}</p>
             </a>
@@ -73,46 +78,13 @@ const latestPosts = posts.filter((post) => post.id !== featured.id).slice(0, 3);
   </section>
 
   <section class="page-band">
-    <div class="site-container">
+    <div class="site-container home-grid">
       <div class="section-head">
-        <h2>编辑方法</h2>
+        <h2>各专栏最新</h2>
+        <p>每个方向保留一个最新入口，适合按问题长期回看。</p>
       </div>
-      <div class="section-overview">
-        <div class="overview-card">
-          <div class="overview-card__title">
-            <strong>先摆材料，再给判断</strong>
-            <span>公开可核验</span>
-          </div>
-          <p>文章先交代可追溯的信息，再写分析，避免结论先行。</p>
-        </div>
-        <div class="overview-card">
-          <div class="overview-card__title">
-            <strong>每篇都保留来源</strong>
-            <span>来源清单</span>
-          </div>
-          <p>重要条目会在正文和独立来源区同时保留，方便继续查证。</p>
-        </div>
-        <div class="overview-card">
-          <div class="overview-card__title">
-            <strong>栏目长期跟踪同一问题</strong>
-            <span>连续观察</span>
-          </div>
-          <p>Field Notes 负责观察，Dossiers 和 People 负责沉淀，Briefs 负责收束。</p>
-        </div>
-        <div class="overview-card">
-          <div class="overview-card__title">
-            <strong>适合长文阅读</strong>
-            <span>清晰排版</span>
-          </div>
-          <p>移动端和桌面端都保持安静、清楚的层级关系。</p>
-        </div>
-        <div class="overview-card">
-          <div class="overview-card__title">
-            <strong>静态发布</strong>
-            <span>Markdown 驱动</span>
-          </div>
-          <p>当前阶段不引入数据库、登录或后台系统，内容完全由 Markdown 管理。</p>
-        </div>
+      <div class="latest-list">
+        {columnHighlights.map(({ post }) => post ? <ArticleCard entry={post} compact /> : null)}
       </div>
     </div>
   </section>
